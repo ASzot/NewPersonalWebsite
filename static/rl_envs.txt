@@ -1,0 +1,40 @@
+TITLE: Keeping Track of RL Environments
+|
+NEXT:
+|
+PREV:
+|
+Date: February 12th, 2020
+|
+META:
+|
+
+<p>
+  More environments to test reinforcement learning (RL) agents are created all
+  the time. 
+  As specific problems in RL are tackled, the rate these environments being
+  made seems to be growing.
+  To keep track of everything for myself,
+  and to maybe help others, I compiled a list of RL environments. I decided to
+  host this list on GitHub so others can easily access it. Here is the
+  link: 
+</p>
+
+<p>
+  <a class='btn btn-default btn-norm' style='font-size: 1.5em; text-align:
+  center' href='https://github.com/clvrai/awesome-rl-envs'>GitHub Repo</a>
+</p>
+
+<p>
+  If you have a specific project idea, this list can be helpful to find
+  the right environment to experiment in. 
+  For instance, if
+  you are working on multi-task learning in RL, you can find some environments to
+  test your method or spark ideas under the <a
+  href='https://github.com/clvrai/awesome-rl-envs#multi-task-learning'>multi-task
+  learning section</a>.  Even if you aren't working on a specific project, going
+  through this list and seeing the challenges each environment presents could
+  inspire new ideas.  
+</p>
+
+

@@ -1,0 +1,158 @@
+TITLE:Principle Component Analysis (PCA)
+|
+NEXT:
+|
+PREV:
+|
+Date:Oct 5, 2017, Updated Apr 24, 2018
+|
+META: What PCA is
+|
+
+<p>
+  With high dimensional data it is hard to observe the correlations
+  between variables. Principle Component Analysis (PCA) is a tool to solve this
+  problem. PCA is a data dimensionality reduction technique that project high
+  dimension data to a lower dimension. This can make your data easier to
+  analyze, visualize or preform classification on. 
+</p>
+
+<p>
+  The curse of dimensionality means that with higher dimensional data we need
+  exponentially more samples (for a more detailed look check out <a
+  href='https://medium.freecodecamp.org/the-curse-of-dimensionality-how-we-can-save-big-data-from-itself-d9fa0f872335'>this
+  post from freeCodeCamp</a>). PCA is a maintain the <i>structure</i> of the
+  data in lower dimensions. Of course this could be valuable in high
+  dimensional data classification tasks where we don't have enough samples to
+  train a classifier. A common task is to project to 2 or 3 dimensions where we
+  can plot the data. For example below is an example of the iris dataset (not
+  2D data!) projected into 2 dimensions using 2D. It keeps the intuitive
+  <i>shape</i> of the data.
+</p>
+
+<img class='center-image' src='/static/img/ml/traditional/pca/example.png' width='400px'/>
+
+<p>
+  So what exactly does PCA do? It is a <b>linear dimension reduction
+  technique</b>. 
+  $$
+  x' = U^T x
+  $$
+  We want to find a \( U \) for this equation. \( U
+  \) should have dimensions \( D \times R \) where \( D \) is the dimension of
+  the original dataset and \( R \) is the dimension of the projected data. The
+  core idea of PCA is finding a \( U \) that maintains the variance along the
+  principle components of the dataset. We will explore this idea throughout the
+  rest of the post. 
+</p>
+
+<p>
+  The first step in PCA is to standardize all of the features so that we can
+  compare variances between features equally. Each of our
+  features could be in entirely different scales. For instance we could have
+  one feature be "height (meters)" and another be "diameter (centimeters)". We
+  want all of our data to be on the same scale. To do this we standardize the
+  data. Standardization means converting each feature to have mean 0 and
+  standard deviation 1. Along each feature use the following equation. 
+</p>
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+
+<p>
+  Where \( \mu \) is the mean along that feature's axis and \( \sigma \) is the
+  standard deviation. \( z \) is referred to as the \( z \) score and is our
+  standardized data. 
+</p>
+
+<p>
+  Next we are going to want to calculate how all of the variables relate to one
+  another. We do this through the covariance matrix. We can calculate the
+  covariance matrix by multiplying our data matrix \( \textbf{X} \) by its
+  transpose. (And multiplying by a constant \( \frac{1}{N} ). This assumes the data has already
+  been standardized.
+</p>
+
+$$
+S = \frac{1}{N} \sum_i x_i x_i^T 
+$$
+
+<p>
+  As stated before, the goal of PCA is to maximize the variance of the data
+  along the principle components. To start off with let's say maximizing the
+  variance of the data along just a single arbitrary line. How could we select
+  a vector \( v \) to maximize the variance of the points projected onto the
+  line \( v \)? So we would like to find \( u \) to maximize the following
+  (keep in mind \( S \) is just a single number in this 1 dimensional case).
+</p>
+
+$$
+S = \frac{1}{N} \sum_i (u^T x_i)^2
+$$
+
+<p>
+Simplifying the expression a little bit gives:
+</p>
+
+$$
+S = \frac{1}{N} \sum_i u^T x_i x_i^T u = u^T \left( \sum_i x_i x_i^T \right) u
+= u^T S u
+$$
+
+<p>
+  By definition we know that the covariance \( S \) is positive semidefinite.
+  So that means \( u^T S u \) can grow without bound. Let's constrain this
+  problem a little bit more by saying \( \lVert u \lVert_2^2 = 1 \). We can then apply
+  lagrangian multiplier (read more about it <a
+  href='http://tutorial.math.lamar.edu/Classes/CalcIII/LagrangeMultipliers.aspx'
+  >here</a>) to get:
+</p>
+
+$$
+u^T S u + \lambda (1 - \lVert u \lVert _2^2)
+$$
+
+$$
+u^T S u + \lambda ( 1 - u^T u )
+$$
+
+$$
+\frac{\partial L}{\partial u} = 2S u - 2\lambda u = 0
+$$
+
+$$
+Su = \lambda u
+$$
+
+<p>
+  This is the definition of an eigenvector! Therefore we know to select
+  an eigenvector such that \( \lambda u \) is maximized. This is going to be
+  the eigenvector with the largest eigenvalue \( \lambda \).
+</p>
+
+<p>
+  Therefore, it is sensible to see that the eigenvectors with small eigenvalues
+  will have a small contribution to the projected variance. Therefore, we can
+  in general project to any number of dimensions \( R \) by selecting only the
+  top \( R \) eigenvectors (sorted by eigenvalue). This will maximize the
+  variance in our projected space. 
+</p>
+
+<p>
+  We then use these eigenvectors to construct the projection matrix (we just simply concatenate
+  the eigenvectors into a matrix). We then use this matrix to project our data
+  into the desired dimension \( N \). 
+</p>
+
+<p>
+  We can then multiply our data matrix by the PCA projection matrix to get the
+  projection into the lower dimension. 
+</p>
+
+<p>
+  I put together a Python notebook with an implementation of PCA in numpy.
+</p>
+
+<a class='btn btn-default btn-norm' style='font-size: 1.5em; text-align:
+center' href='https://github.com/ASzot/machine-learning-alg-examples/blob/master/pca.ipynb'>Python Notebook</a>
