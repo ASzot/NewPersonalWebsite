@@ -1,7 +1,6 @@
 ---
 title: Keeping Track of RL Environments
 date: 2020-02-12
-draft: true
 ---
 More environments to test reinforcement learning (RL) agents are created all
 the time. 

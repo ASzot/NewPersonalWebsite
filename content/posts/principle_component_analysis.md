@@ -2,7 +2,6 @@
 title: Principle Component Analysis (PCA)
 date: 2017-10-05
 math: true
-draft: true
 ---
 With high dimensional data it is hard to observe the correlations
 between variables. Principle Component Analysis (PCA) is a tool to solve this

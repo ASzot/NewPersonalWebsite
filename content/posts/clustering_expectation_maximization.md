@@ -2,7 +2,6 @@
 title: Clustering, K-Means, Mixture Models, Expectation Maximization
 date: 2017-03-05
 math: true
-draft: true
 ---
 Clustering is an unsupervised form of learning. We have data but no
 labels and we want to infer some sort of labels from the data alone. 

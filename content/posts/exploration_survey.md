@@ -1,7 +1,6 @@
 ---
 title: Curiosity Driven AI
 date: 2019-04-01
-draft: true
 ---
 
 *Written in my college writing class for people without a background in

@@ -1,7 +1,6 @@
 ---
 title: "Tea-time: Stream Financial Series Data from CSVs"
 date: 2018-07-30
-draft: true
 ---
 
 This post will describe a system I made called Tea-time. Tea-Time is for

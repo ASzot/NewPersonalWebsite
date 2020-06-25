@@ -1,7 +1,6 @@
 ---
 title: Setting up OpenAI Gym with MuJoCo
 date: 2018-04-05
-draft: true
 ---
 ## Introduction
 MuJoCo is a powerful physics simulator that you can run experiments in. 

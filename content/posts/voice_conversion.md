@@ -1,7 +1,6 @@
 ---
 title: Voice Conversion
 date: 2017-11-28
-draft: true
 aliases:
 - /blog/machine_learning/deep_learning/voice_conversion
 ---
