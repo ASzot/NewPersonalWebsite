@@ -10,7 +10,7 @@ aliases:
 
 ## Introduction
 
-Recently, there have been many results in computer vision with the
+Recently, there have been many exciting results in computer vision with the
 introduction of deeper convolutional models that encode higher dimensional and
 interpretable features (neural style) [[1]](https://arxiv.org/pdf/1705.04058.pdf').
 In contrast, deep and thorough understanding of speech  has suffered from the lack of deep learning
