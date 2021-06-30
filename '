@@ -1,5 +1,78 @@
-{{- $profile := .Site.Params.home.profile -}}
-<div class="wrap-pad">
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+	<meta name="generator" content="Hugo 0.72.0" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link href='bootstrap.min.css' rel='stylesheet' type='text/css'>
+        <title>Andrew Szot</title><meta name="Description" content=""><meta property="og:title" content="Andrew Szot" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.andrewszot.com/" />
+<meta property="og:updated_time" content="2020-08-30T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Andrew Szot"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="Andrew Szot">
+<meta name="apple-mobile-web-app-title" content="Andrew Szot"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.andrewszot.com/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="Andrew Szot">
+    <link rel="feed" href="/index.xml" type="application/rss+xml" title="Andrew Szot"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "https:\/\/www.andrewszot.com\/","inLanguage": "en-us","name": "Andrew Szot"
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+  <div class="header-wrapper wrap-pad">
+    <div class="title-header content">
+      <div class="inner" style='display: flex'>
+        <a href='/' class='title-link'>
+          <h1>Andrew Szot</h1>
+        </a>
+        <img id='me-picture' src='/landing/me.jpg'>
+      </div>
+      <div class='side-btns'>
+        <a href='/landing/personal_cv.pdf' class="">CV</a>
+        <a href='https://github.com/ASzot' class="">GitHub</a>
+        <a href='/posts' class="">Blog</a>
+        <a href="javascript:void(0);" class="menu-item theme-switch" title="">
+          <i class="fas fa-adjust fa-fw"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="inner" style='display: flex'>
+              <a href='/'>
+                <h1>Andrew Szot</h1>
+              </a>
+              <img id='me-picture' src='/landing/me.jpg'>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="Blog">Blog</a><a class="menu-item" href="https://github.com/aszot" title="" rel="noopener noreffer" target="_blank">GitHub</a><a href="javascript:void(0);" class="menu-item theme-switch" title="">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main"><div class="page home"><div class="wrap-pad">
 	<header id="header">
 		<div class='content align-left'>
 			<p>
@@ -11,25 +84,9 @@
 				<a href='https://viterbi-web.usc.edu/~limjj/'>Joseph Lim</a>.  My email is "me at andrew szot" (no spaces) .com.
 			</p>
 
-			<h2>Research</h2>
+			<h2>Publications</h2>
 
 			<div class='container pub-container'>
-        <div class='row'>
-					<div class='col-sm-3 paper-image-container' style=''>
-						<img class='paper-image' style='height: 77px !important' src='landing/hab2_teaser.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Habitat 2.0: Training Home Assistants to Rearrange their Habitat</b>
-						<br>
-						<b>Andrew Szot</b>, Alex Clegg, Eric Undersander, Erik Wijmans, Yili Zhao, John Turner, Noah Maestre, Mustafa Mukadam, Devendra Chaplot, Oleksandr Maksymets, Aaron Gokaslan, Vladimir Vondrus, Sameer Dharur, Franziska Meier, Wojciech Galuba, Angel Chang, Zsolt Kira, Vladlen Koltun, Jitendra Malik, Manolis Savva, Dhruv Batra
-						<div class='paper-pub-info'>
-							In Submission
-              <a href='https://arxiv.org/abs/2106.14405'>[PDF]</a>
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
 				<div class='row'>
 					<div class='col-sm-3 paper-image-container' style=''>
 						<img class='paper-image' style='height: 77px !important' src='landing/goal_prox_teaser.jpg' />
@@ -38,9 +95,9 @@
 						<b>Goal-Driven Imitation Learning from Observation by Inferring
 						Goal Proximity</b>
 						<br>
-						<b>Andrew Szot</b>, Youngwoon Lee, Shao-hua Sun and Joseph J. Lim
+						<b>A. Szot</b>, Y. Lee, S. Sun and J. J. Lim
 						<div class='paper-pub-info'>
-							In Submission, PDF Soon
+							In Submission to ICLR 2021, PDF Soon
 						</div>
 					</div>
 					<div class='col-sm-1'>
@@ -53,10 +110,10 @@
 					<div class='col-sm-8 paper-content'>
 						<b>Generalization to New Actions in Reinforcement Learning</b>
 						<br>
-						Ayush Jain*, <b>Andrew Szot*</b> and Joseph J. Lim (* - equal contribution)
+						A. Jain*, <b>A. Szot*</b> and J. J. Lim (* - equal contribution)
 						<div class='paper-pub-info'>
 							ICML 2020 
-              <a href='https://arxiv.org/abs/2011.01928'>[PDF]</a>
+              <a href='https://proceedings.icml.cc/static/paper_files/icml/2020/29-Paper.pdf'>[PDF]</a>
               <a href='https://sites.google.com/view/action-generalization/'>[Project]</a>
 						</div>
 					</div>
@@ -219,3 +276,17 @@
     </div>
   </header>
 </div>
+</div></main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i>
+                    Andrew Szot<span itemprop="copyrightYear"> 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"","maxShownLines":10},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

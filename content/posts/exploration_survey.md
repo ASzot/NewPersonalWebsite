@@ -3,9 +3,6 @@ title: Curiosity Driven AI
 date: 2019-04-01
 ---
 
-*Written in my college writing class for people without a background in
-reinforcement learning.*
-
 <h3>Abstract</h3>
 
   What has driven human accomplishments in sciences? Why do humans want to
