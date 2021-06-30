@@ -1,0 +1,22 @@
+.page {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 1.0rem;
+  padding-right: 1.0rem;
+
+  [header-desktop] & {
+  }
+
+  [header-desktop=normal] & {
+    padding-top: 0;
+  }
+
+  @include blur;
+}
+
+@import "_single";
+@import "_special";
+@import "_archive";
+@import "_home";
+@import "_404";
