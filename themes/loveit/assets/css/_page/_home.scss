@@ -790,7 +790,12 @@ input[type='checkbox'] {
   margin-bottom: 1.5em;
   width: 100% !important;
   max-width: 100% !important;
+
+  .row {
+      margin-bottom: 30px;
+  }
 }
+
 
 .projects-view  {
   font-size: 0.9em;

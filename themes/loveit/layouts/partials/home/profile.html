@@ -1,341 +1,243 @@
 {{- $profile := .Site.Params.home.profile -}}
 <div class="wrap-pad">
-	<header id="header">
-		<div class='content align-left'>
-			<p>
-				I am a Machine Learning PhD student at Georgia Tech advised by <a href='https://www.cc.gatech.edu/~zk15/'>Zsolt Kira</a> and
-				<a href='https://www.cc.gatech.edu/~dbatra/index.html'>Dhruv Batra</a>. 
-
-        I am interested in the intersection of deep learning, reinforcement learning and robotics. 
-
-        In Summer 2022, I am interning at <a href="https://ai.facebook.com">Meta AI</a> working with <a href='https://ai.facebook.com/people/akshara-rai/'>Akshara Rai</a> and <a href='https://rutadesai.github.io'>Ruta Desai</a>.
-
-        From Summer to Winter of 2021 I interned at Meta AI working with
-        <a href='https://fmeier.github.io'>Franziska Meier</a> on inverse reinforcement learning. 
-
-        I completed my undergrad in Computer Science at
-				the University of Southern California with a minor in Mathematics, where I worked with
-				<a href='https://viterbi-web.usc.edu/~limjj/'>Joseph Lim</a>.  My email is "me at andrew szot" (no spaces) .com.
-			</p>
-
-			<h2>Research</h2>
-
-			<div class='container pub-container'>
-        <div class='row'>
-					<div class='col-sm-3 paper-image-container' style=''>
-						<img class='paper-image' style='height: 77px !important' src='landing/mirl.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Meta-IRL: Learning Generalizable Reward Functions from Demonstrations</b>
-						<br>
-            <b>Andrew Szot</b>, Amy Zhang, Dhruv Batra, Zsolt Kira, Franziska Meier
-						<div class='paper-pub-info'>
-              Preprint 2022 
-              [PDF Coming Soon]
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
-
-        <div class='row'>
-					<div class='col-sm-3 paper-image-container' style=''>
-						<img class='paper-image' style='height: 120px !important' src='landing/housekeep.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Housekeep: Tidying Virtual Households using Commonsense Reasoning</b>
-						<br>
-            Yash Kant, Arun Ramachandran, Sriram Yenamandra, Igor Gilitschenski, Dhruv Batra, <b>Andrew Szot</b>*, Harsh Agrawal
-						<div class='paper-pub-info'>
-              Preprint 2022 
-              <a href='https://arxiv.org/abs/2205.10712'>[PDF]</a>
-              <a href='https://yashkant.github.io/housekeep/'>[Project]</a>
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
-
-        <div class='row'>
-					<div class='col-sm-3 paper-image-container' style=''>
-						<img class='paper-image' style='height: 77px !important' src='landing/hab2_teaser.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Habitat 2.0: Training Home Assistants to Rearrange their Habitat</b>
-						<br>
-						<b>Andrew Szot</b>, Alex Clegg, Eric Undersander, Erik Wijmans, Yili Zhao, John Turner, Noah Maestre, Mustafa Mukadam, Devendra Chaplot, Oleksandr Maksymets, Aaron Gokaslan, Vladimir Vondrus, Sameer Dharur, Franziska Meier, Wojciech Galuba, Angel Chang, Zsolt Kira, Vladlen Koltun, Jitendra Malik, Manolis Savva, Dhruv Batra
-						<div class='paper-pub-info'>
-              NeurIPS 2021 <b>(Spotlight, top 3% of 9122 submissions)</b>
-              <a href='https://arxiv.org/abs/2106.14405'>[PDF]</a>
-              <a href='https://sites.google.com/view/habitat2'>[Project]</a>
-              <a href="#press-hab2">[Press]</a>
-
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
-				<div class='row'>
-					<div class='col-sm-3 paper-image-container' style=''>
-						<img class='paper-image' style='height: 77px !important' src='landing/goal_prox_teaser.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Goal-Driven Imitation Learning from Observation by Inferring
-						Goal Proximity</b>
-						<br>
-						Youngwoon Lee*, <b>Andrew Szot*</b>, Shao-hua Sun and Joseph J. Lim (* - equal contribution)
-						<div class='paper-pub-info'>
-							NeurIPS 2021
-              <a href="https://openreview.net/pdf?id=lp9foO8AFoD">[PDF]</a>
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
-				<div class='row'>
-					<div class='col-sm-3 paper-image-container' style='margin-top: -50px; margin-bottom: -50px;'>
-						<img class='paper-image' src='landing/create_teaser.jpg' />
-					</div>
-					<div class='col-sm-8 paper-content'>
-						<b>Generalization to New Actions in Reinforcement Learning</b>
-						<br>
-						Ayush Jain*, <b>Andrew Szot*</b> and Joseph J. Lim (* - equal contribution)
-						<div class='paper-pub-info'>
-							ICML 2020 
-              <a href='https://arxiv.org/abs/2011.01928'>[PDF]</a>
-              <a href='https://sites.google.com/view/action-generalization/'>[Project]</a>
-						</div>
-					</div>
-					<div class='col-sm-1'>
-					</div>
-				</div>
-			</div>
-
-      <h2>Experience</h2>
-			<ul>
-				<li>
-					<span><a href='https://ai.facebook.com'>Facebook AI Research</a></span>:
-					Research in inverse reinforcement learning with <a
-						href='https://fmeier.github.io'>Dr. Franziska Meier</a>.
-					<div class='date'>Summer 2021 - Winter 2021</div>
-				</li>
-				<li>
-					<span><a href='https://clvrai.com/'>USC CLVR Lab</a></span>:
-					Research in deep reinforcement learning with <a
-						href='https://viterbi-web.usc.edu/~limjj/'>Professor Joseph Lim</a>.
-					<div class='date'>Fall 2018 - Summer 2020 (Summer 2019 included)</div>
-				</li>
-				<li>
-					<span><a href='http://mcl.usc.edu/'>USC MCL</a></span>:
-					Research in semi-supervised image classification with <a
-						href='https://viterbi.usc.edu/directory/faculty/Kuo/Chung-Chieh'>Professor C.-C. Jay Kuo</a>.
-					<div class='date'>Fall 2016 - Winter 2017</div>
-				</li>
-				<li>
-					<span>Airbnb</span>:
-					Software engineering internship in fraud detection team.
-					<div class='date'>Summer 2018</div>
-
-				</li>
-				<li>
-					<span>eBay</span>:
-					Software engineering internship in data science and services
-					team.
-					<div class='date'>Summer 2017</div>
-				</li>
-			</ul>
-
-      <h2>Awards</h2>
-      <ul>
-        <li>
-          GT Outstanding Online Teaching Assistant: One of top 2 online TAs in
-          department. 
-        </li>
-        <li>
-          NSF GRFP Honorable Mention <i>(2021)</i>
-        </li>
-        <li>
-          USC Viterbi Fellowship: Research funding given to the top 20
-          engineering students per class. <i>(2016-2020)</i>
-        </li>
-        <li>
-          USC Trustee Scholarship: Full tuition scholarship. <i>(2016-2020)</i>
-        </li>
-        <li>
-          USC Provost Fellowship: Merit based fellowship for summer research
-          funding.  <i>(2019)</i>
-        </li>
-      </ul>
-
-      <h2>Service and Teaching</h2>
-      <ul>
-        <li>
-          Lead organizer of “Habitat Rearrangement Challenge” at NeurIPS 2022.
-        </li>
-        <li>
-          Organizer at Embodied AI Workshop at CVPR 2022.
-        </li>
-        <li>
-          Graduate Deep Learning Class Teaching Assistant (CS 7643, won
-          outstanding TA award). See the homework assignment <a
-            href="https://colab.research.google.com/drive/1tweQ241rBWzk7aNg5agSd-WRtlJzhsVp">I
-            created for the class.</a> <i>(Fall 2021)</i>
-        </li>
-        <li>
-          Reviewer: ICCV 2021, IROS 2021, ICLR 2022, CVPR 2022.
-        </li>
-      </ul>
-
-      <h2>Press Coverage</h2>
-      <h3 id="press-hab2">Habitat 2.0</h3>
-			<ul>
-				<li>
-          CNET: <a href='https://www.cnet.com/news/how-facebooks-ai-is-training-home-robots-to-tackle-the-chores-you-hate/'>How Facebook’s AI is training home robots to tackle the chores you hate</a>
-				</li>
-        <li>
-          TechCrunch: <a href='https://techcrunch.com/2021/06/30/facebook-and-matterport-collaborate-on-realistic-virtual-training-environments-for-ai/'>Facebook and Matterport collaborate on realistic virtual training environments for AI</a>
-        </li>
-        <li>
-          VentureBeat: <a href="https://venturebeat.com/2021/06/30/facebook-updates-habitat-environment-to-train-embodied-ai/">Facebook updates Habitat environment to train ’embodied AI’”</a>
-        </li>
-        <li>
-          Culture Geek (broadcast, France): <a href="https://www.bfmtv.com/economie/replay-emissions/culture-geek/culture-geek-facebook-veut-mettre-des-robots-de-majordomes-dans-nos-maisons-par-anthony-morel-01-07_VN-202107010032.html">Facebook wants to put butler robots in our homes</a>
-        </li>
-        <li>
-          WIRED (Middle East): <a href="https://wired.me/technology/artificial-intelligence/facebook-wants-to-train-your-robot-butler/">Facebook wants to train robot butlers to tidy your house</a>
-        </li>
-        <li>
-          Siècle Digital (France): <a href="https://siecledigital.fr/2021/07/05/facebook-habitat-2-0-ia-maison/">Facebook unveils Habitat 2.0: a virtual environment to train AI to navigate a house</a>
-        </li>
-        <li>
-          Ynet (Israel): <a href="https://www.ynet.co.il/digital/technews/article/HkKY6xq3u">Shopping Assistants and Home Robots: The Future of Artificial Intelligence According to Facebook</a>
-        </li>
-			</ul>
-
-			<h2>Open Source</h2>
-			<div id="portfolio" class="projects-view container-fluid">
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/imagination-augmented-agents-tf">Imagination Augmented Agents</a>
-            </span> 
-            <i class="date-spn">May 2018</i>
-          </div> 
-          <div class="col-sm-8">
+    <header id="header">
+        <div class='content align-left'>
             <p>
-              Was the first to implement <a href="https://arxiv.org/abs/1707.06203">DeepMind's Imagination Augmented Agents</a> paper in TensorFlow. 
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/voice-conversion">Voice Conversion
-              </a>
-            </span> 
-            <i class="date-spn">Fall 2017</i>
-          </div> 
-          <div class="col-sm-8"> 
-            <p>Implemented CycleGAN, supervised speech recognition, WaveNet, Vector Quantised-Variational AutoEncoder to achieve voice conversion between speakers.  Please see the 
-            <a href="https://www.andrewszot.com/blog/machine_learning/deep_learning/voice_conversion">detailed blog report
-            </a> for more info. 
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="http://caisplusplus.usc.edu/">CAIS++
-              </a>
-            </span> 
-            <i class="date-spn">Winter 2017 - Spring 2019</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>Was the co-founder, helped create the curriculum and directed projects. 
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/Phorum">Phorum
-              </a>
-            </span> 
-            <i class="date-spn">Winter 2016</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>
-            Event based photo sharing application using Swift, iOS, Firebase. Supported user accounts (authenticate account using Twitter Digits API), searching for events by location, following users, user timelines and posting photos.
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/MathologicaConsole">Mathologica
-              </a>
-            </span> 
-            <i class="date-spn">Summer 2014 - Summer 2015</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>
-            Symbolic math solving service from scratch to help students with
-            math ranging from pre-algebra to advanced multivariable calculus.
-            Built web service using C# and ASP.NET running on Azure, Android
-            application using Java, and a Windows store application using C#.
-            Member of the Microsoft BizSpark program. See 
-            <a href="http://www.ticeman.fr/lepropulseur/?p=1414">here
-            </a> for a review. 
-            <a href="https://github.com/ASzot/MathologicaDemo">Demo code
-            </a>.
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/imgstory">imgStory
-              </a>
-            </span> 
-            <i class="date-spn">Winter 2015</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>
-            Published photo sharing based social media platform as an iOS application using Objective-C and MongoDB.
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/xna_game_engine">Graphics Engines
-              </a>
-            </span> 
-            <i class="date-spn">Fall 2013 - Spring 2014</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>
-              Created fully featured FPS game engine using XNA and C# complete with 3D rendering system, AI system and physics engine. Created an earlier version in C++ and DirectX 
-              <a href="https://github.com/ASzot/Andrew-Engine-3">here.</a>
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <span style="text-align: left; margin-bottom: 0px;">
-              <a class="big-link" href="https://github.com/ASzot/Sudoku-Complete">Sudoku Complete
-              </a>
-            </span> 
-            <i class="date-spn">Spring 2012</i>
-          </div> 
-          <div class="col-sm-8">
-            <p>
-              Basic Sodoku puzzle game with an automated solver. Posted to Windows Store.
-            </p>
-          </div>
-        </div>
-      </div>
+            I am a Machine Learning PhD student at Georgia Tech advised by <a href='https://www.cc.gatech.edu/~zk15/'>Zsolt Kira</a> and
+            <a href='https://www.cc.gatech.edu/~dbatra/index.html'>Dhruv Batra</a>. 
 
-    </div>
-  </header>
+            I am interested in the intersection of deep learning, reinforcement learning and robotics. 
+
+            In Summer 2022, I am interning at <a href="https://ai.facebook.com">Meta AI</a> working with <a href='https://ai.facebook.com/people/akshara-rai/'>Akshara Rai</a> and <a href='https://rutadesai.github.io'>Ruta Desai</a>.
+
+            From Summer to Winter of 2021 I interned at Meta AI working with
+            <a href='https://fmeier.github.io'>Franziska Meier</a> on inverse reinforcement learning. 
+
+            I completed my undergrad in Computer Science at
+            the University of Southern California with a minor in Mathematics, where I worked with
+            <a href='https://viterbi-web.usc.edu/~limjj/'>Joseph Lim</a>.  My email is "me at andrew szot" (no spaces) .com.
+            </p>
+
+            <h2>Research</h2>
+
+            <div class='container pub-container'>
+                <div class='row'>
+                    <div class='col-sm-3 paper-image-container' style=''>
+                        <img class='paper-image' style='height: 77px !important' src='landing/mirl.jpg' />
+                    </div>
+                    <div class='col-sm-8 paper-content'>
+                        <b>Meta-IRL: Learning Generalizable Reward Functions from Demonstrations</b>
+                        <br>
+                        <b>Andrew Szot</b>, Amy Zhang, Dhruv Batra, Zsolt Kira, Franziska Meier
+                        <div class='paper-pub-info'>
+                            Preprint 2022 
+                            [PDF Coming Soon]
+                        </div>
+                    </div>
+                    <div class='col-sm-1'>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='col-sm-3 paper-image-container' style=''>
+                        <img class='paper-image' style='height: 120px !important' src='landing/housekeep.jpg' />
+                    </div>
+                    <div class='col-sm-8 paper-content'>
+                        <b>Housekeep: Tidying Virtual Households using Commonsense Reasoning</b>
+                        <br>
+                        Yash Kant, Arun Ramachandran, Sriram Yenamandra, Igor Gilitschenski, Dhruv Batra, <b>Andrew Szot</b>*, Harsh Agrawal
+                        <div class='paper-pub-info'>
+                            CVPR Embodied AI Workshop 2022
+                            <a href='https://arxiv.org/abs/2205.10712'>[PDF]</a>
+                            <a href='https://yashkant.github.io/housekeep/'>[Project]</a>
+                        </div>
+                    </div>
+                    <div class='col-sm-1'>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='col-sm-3 paper-image-container' style=''>
+                        <img class='paper-image' style='height: 77px !important' src='landing/hab2_teaser.jpg' />
+                    </div>
+                    <div class='col-sm-8 paper-content'>
+                        <b>Habitat 2.0: Training Home Assistants to Rearrange their Habitat</b>
+                        <br>
+                        <b>Andrew Szot</b>, Alex Clegg, Eric Undersander, Erik Wijmans, Yili Zhao, John Turner, Noah Maestre, Mustafa Mukadam, Devendra Chaplot, Oleksandr Maksymets, Aaron Gokaslan, Vladimir Vondrus, Sameer Dharur, Franziska Meier, Wojciech Galuba, Angel Chang, Zsolt Kira, Vladlen Koltun, Jitendra Malik, Manolis Savva, Dhruv Batra
+                        <div class='paper-pub-info'>
+                            NeurIPS 2021 <b>(Spotlight, top 3% of 9122 submissions)</b>
+                            <a href='https://arxiv.org/abs/2106.14405'>[PDF]</a>
+                            <a href='https://sites.google.com/view/habitat2'>[Project]</a>
+                            <a href="#press-hab2">[Press]</a>
+
+                        </div>
+                    </div>
+                    <div class='col-sm-1'>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-sm-3 paper-image-container' style=''>
+                        <img class='paper-image' style='height: 77px !important' src='landing/goal_prox_teaser.jpg' />
+                    </div>
+                    <div class='col-sm-8 paper-content'>
+                        <b>Goal-Driven Imitation Learning from Observation by Inferring
+                            Goal Proximity</b>
+                        <br>
+                        Youngwoon Lee*, <b>Andrew Szot*</b>, Shao-hua Sun and Joseph J. Lim (* - equal contribution)
+                        <div class='paper-pub-info'>
+                            NeurIPS 2021
+                            <a href="https://openreview.net/pdf?id=lp9foO8AFoD">[PDF]</a>
+                        </div>
+                    </div>
+                    <div class='col-sm-1'>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-sm-3 paper-image-container' style='margin-top: -50px; margin-bottom: -50px;'>
+                        <img class='paper-image' src='landing/create_teaser.jpg' />
+                    </div>
+                    <div class='col-sm-8 paper-content'>
+                        <b>Generalization to New Actions in Reinforcement Learning</b>
+                        <br>
+                        Ayush Jain*, <b>Andrew Szot*</b> and Joseph J. Lim (* - equal contribution)
+                        <div class='paper-pub-info'>
+                            ICML 2020 
+                            <a href='https://arxiv.org/abs/2011.01928'>[PDF]</a>
+                            <a href='https://sites.google.com/view/action-generalization/'>[Project]</a>
+                        </div>
+                    </div>
+                    <div class='col-sm-1'>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Experience</h2>
+            <ul>
+                <li>
+                    <span><a href='https://ai.facebook.com'>Facebook AI Research</a></span>:
+                    Research in inverse reinforcement learning with <a
+                                                                            href='https://fmeier.github.io'>Dr. Franziska Meier</a>.
+                                                                        <div class='date'>Summer 2021 - Winter 2021</div>
+                </li>
+                <li>
+                    <span><a href='https://clvrai.com/'>USC CLVR Lab</a></span>:
+                    Research in deep reinforcement learning with <a
+                                                                         href='https://viterbi-web.usc.edu/~limjj/'>Professor Joseph Lim</a>.
+                                                                     <div class='date'>Fall 2018 - Summer 2020 (Summer 2019 included)</div>
+                </li>
+                <li>
+                    <span><a href='http://mcl.usc.edu/'>USC MCL</a></span>:
+                    Research in semi-supervised image classification with <a
+                                                                                  href='https://viterbi.usc.edu/directory/faculty/Kuo/Chung-Chieh'>Professor C.-C. Jay Kuo</a>.
+                                                                              <div class='date'>Fall 2016 - Winter 2017</div>
+                </li>
+                <li>
+                    <span>Airbnb</span>:
+                    Software engineering internship in fraud detection team.
+                    <div class='date'>Summer 2018</div>
+
+                </li>
+                <li>
+                    <span>eBay</span>:
+                    Software engineering internship in data science and services
+                    team.
+                    <div class='date'>Summer 2017</div>
+                </li>
+            </ul>
+
+            <h2>Awards</h2>
+            <ul>
+                <li>
+                    GT Outstanding Online Teaching Assistant: One of top 2 online TAs in department. <i>(2021)</i>
+                </li>
+                <li>
+                    NSF GRFP Honorable Mention. <i>(2021)</i>
+                </li>
+                <li>
+                    USC Viterbi Fellowship: Research funding given to the top 20
+                    engineering students per class. <i>(2016-2020)</i>
+                </li>
+                <li>
+                    USC Trustee Scholarship: Full tuition scholarship. <i>(2016-2020)</i>
+                </li>
+                <li>
+                    USC Provost Fellowship: Merit based fellowship for summer research
+                    funding.  <i>(2019)</i>
+                </li>
+            </ul>
+
+            <h2>Service and Teaching</h2>
+            <ul>
+                <li>
+                    Lead organizer of <a href='https://aihabitat.org/challenge/rearrange_2022/'>Habitat Rearrangement Challenge</a>at NeurIPS 2022.
+                </li>
+                <li>
+                    Organizer at <a href='https://embodied-ai.org'>Embodied AI Workshop </a> at CVPR 2022.
+                </li>
+                <li>
+                    Graduate Deep Learning Class Teaching Assistant (CS 7643, won
+                    outstanding TA award). See the homework assignment <a
+                                                                               href="https://colab.research.google.com/drive/1tweQ241rBWzk7aNg5agSd-WRtlJzhsVp">I
+                                                                               created for the class.</a> <i>(Fall 2021)</i>
+                </li>
+                <li>
+                    Reviewer: ICCV 2021, IROS 2021, ICLR 2022, CVPR 2022.
+                </li>
+            </ul>
+
+            <h2>Press Coverage</h2>
+            <h3 id="press-hab2">Habitat 2.0</h3>
+            <ul>
+                <li>
+                    CNET: <a href='https://www.cnet.com/news/how-facebooks-ai-is-training-home-robots-to-tackle-the-chores-you-hate/'>How Facebook’s AI is training home robots to tackle the chores you hate</a>
+                </li>
+                <li>
+                    TechCrunch: <a href='https://techcrunch.com/2021/06/30/facebook-and-matterport-collaborate-on-realistic-virtual-training-environments-for-ai/'>Facebook and Matterport collaborate on realistic virtual training environments for AI</a>
+                </li>
+                <li>
+                    VentureBeat: <a href="https://venturebeat.com/2021/06/30/facebook-updates-habitat-environment-to-train-embodied-ai/">Facebook updates Habitat environment to train ’embodied AI’”</a>
+                </li>
+                <li>
+                    Culture Geek (broadcast, France): <a href="https://www.bfmtv.com/economie/replay-emissions/culture-geek/culture-geek-facebook-veut-mettre-des-robots-de-majordomes-dans-nos-maisons-par-anthony-morel-01-07_VN-202107010032.html">Facebook wants to put butler robots in our homes</a>
+                </li>
+                <li>
+                    WIRED (Middle East): <a href="https://wired.me/technology/artificial-intelligence/facebook-wants-to-train-your-robot-butler/">Facebook wants to train robot butlers to tidy your house</a>
+                </li>
+                <li>
+                    Siècle Digital (France): <a href="https://siecledigital.fr/2021/07/05/facebook-habitat-2-0-ia-maison/">Facebook unveils Habitat 2.0: a virtual environment to train AI to navigate a house</a>
+                </li>
+                <li>
+                    Ynet (Israel): <a href="https://www.ynet.co.il/digital/technews/article/HkKY6xq3u">Shopping Assistants and Home Robots: The Future of Artificial Intelligence According to Facebook</a>
+                </li>
+            </ul>
+
+            <h2>Open Source</h2>
+            <ul>
+                <li>
+                    <a href="https://github.com/ASzot/imagination-augmented-agents-tf">Imagination Augmented Agents</a> (May 2018): Was the first to implement <a href="https://arxiv.org/abs/1707.06203">DeepMind's Imagination Augmented Agents</a> paper in TensorFlow. 
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/voice-conversion">Voice Conversion</a> (Fall 2017): Implemented CycleGAN, supervised speech recognition, WaveNet, Vector Quantised-Variational AutoEncoder to achieve voice conversion between speakers.  See the <a href="https://www.andrewszot.com/blog/machine_learning/deep_learning/voice_conversion">detailed blog report </a> for more info. 
+                </li>
+                <li>
+                    <a href="http://caisplusplus.usc.edu/">CAIS++</a> (Winter 2017 - Spring 2019): Co-founder of undergraduate club for AI. I helped create the curriculum and directed projects. 
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/Phorum">Phorum </a> (Winter 2016): Event based photo sharing application using Swift, iOS, Firebase. Supported user accounts (authenticate account using Twitter Digits API), searching for events by location, following users, user timelines and posting photos.
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/MathologicaConsole">Mathologica </a> (Summer 2014 - Summer 2015): Symbolic math solving service from scratch to help students with math ranging from pre-algebra to advanced multivariable calculus.  Built web service using C# and ASP.NET running on Azure, Android application using Java, and a Windows store application using C#.  Member of the Microsoft BizSpark program. See <a href="http://www.ticeman.fr/lepropulseur/?p=1414">here </a> for a review.  <a href="https://github.com/ASzot/MathologicaDemo">Demo code</a>.
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/imgstory">imgStory</a> (Winter 2015) Published photo sharing based social media platform as an iOS application using Objective-C and MongoDB.
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/xna_game_engine">Graphics Engines</a> (Fall 2013 - Spring 2014): Created fully featured FPS game engine using XNA and C# complete with 3D rendering system, AI system and physics engine. Created an earlier version in C++ and DirectX <a href="https://github.com/ASzot/Andrew-Engine-3">here.</a>
+                </li>
+                <li>
+                    <a href="https://github.com/ASzot/Sudoku-Complete">Sudoku Complete</a> (Spring 2012): Sodoku puzzle game with an automated solver. Posted to Windows Store.
+                </li>
+            </ul>
+        </div>
+    </header>
 </div>
