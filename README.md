@@ -1,7 +1,9 @@
-My personal website that I build using [Hugo](https://gohugo.io) and the
-[LoveIt](https://hugoloveit.com) theme.
 
+# Setup
 * Install hugo with `brew install hugo`
+* `git submodule update --init`
+
+# Editing
 * The homepage is at `themes/loveit/layouts/partials/home/profile.html`
 * The header is at `themes/loveit/layouts/partials/header.html`
 * To start the debug server run `hugo server -D`
