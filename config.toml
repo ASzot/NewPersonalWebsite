@@ -8,6 +8,12 @@ theme = "loveit"
   [params.page]
     [params.page.math]
         enable = true
+    [params.page.toc]
+      # whether to enable the table of the contents
+      enable = true
+      keepStatic = true
+      # whether to make the table of the contents in the sidebar automatically collapsed
+      auto = false
 
 [menu]
   [[menu.main]]

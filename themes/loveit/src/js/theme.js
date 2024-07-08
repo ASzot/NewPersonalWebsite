@@ -342,26 +342,27 @@ class Theme {
             if ($codeElements.length) {
                 const $code = $codeElements[$codeElements.length - 1];
                 const $header = document.createElement('div');
-                $header.className = 'code-header ' + $code.className.toLowerCase();
+                //$header.className = 'code-header ' + $code.className.toLowerCase();
                 const $title = document.createElement('span');
                 $title.classList.add('code-title');
-                $title.insertAdjacentHTML('afterbegin', '<i class="arrow fas fa-chevron-right fa-fw"></i>');
-                $title.addEventListener('click', () => {
-                    $chroma.classList.toggle('open');
-                }, false);
+                //$title.insertAdjacentHTML('afterbegin', '<i class="arrow fas fa-chevron-right fa-fw"></i>');
+                //$title.addEventListener('click', () => {
+                //    $chroma.classList.toggle('open');
+                //}, false);
                 $header.appendChild($title);
-                const $ellipses = document.createElement('span');
-                $ellipses.insertAdjacentHTML('afterbegin', '<i class="fas fa-ellipsis-h fa-fw"></i>');
-                $ellipses.classList.add('ellipses');
-                $ellipses.addEventListener('click', () => {
-                    $chroma.classList.add('open');
-                }, false);
-                $header.appendChild($ellipses);
+                // const $ellipses = document.createElement('span');
+                // $ellipses.insertAdjacentHTML('afterbegin', '<i class="fas fa-ellipsis-h fa-fw"></i>');
+                // $ellipses.classList.add('ellipses');
+                // $ellipses.addEventListener('click', () => {
+                //     $chroma.classList.add('open');
+                // }, false);
+                // $header.appendChild($ellipses);
                 const $copy = document.createElement('span');
                 $copy.insertAdjacentHTML('afterbegin', '<i class="far fa-copy fa-fw"></i>');
                 $copy.classList.add('copy');
                 const code = $code.innerText;
-                if (this.config.code.maxShownLines < 0 || code.split('\n').length < this.config.code.maxShownLines + 2) $chroma.classList.add('open');
+                // if (this.config.code.maxShownLines < 0 || code.split('\n').length < this.config.code.maxShownLines + 2) $chroma.classList.add('open');
+                $chroma.classList.add('open');
                 if (this.config.code.copyTitle) {
                     $copy.setAttribute('data-clipboard-text', code);
                     $copy.title = this.config.code.copyTitle;

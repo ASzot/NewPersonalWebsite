@@ -69,10 +69,9 @@
 
         {{- /* Static TOC */ -}}
         {{- if ne $toc.enable false -}}
-            <div class="details toc" id="toc-static"  kept="{{ if $toc.keepStatic }}true{{ end }}">
+            <div class="details toc open" id="toc-static"  kept="{{ if $toc.keepStatic }}true{{ end }}">
                 <div class="details-summary toc-title">
-                    <span>{{ T "contents" }}</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span>Content</span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static">
                     {{- dict "Content" .TableOfContents "Ruby" $params.ruby "Fraction" $params.fraction "Fontawesome" $params.fontawesome | partial "function/content.html" | safeHTML -}}
