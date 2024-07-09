@@ -7,12 +7,12 @@ date: 2024-06-25
 ## Intro
 The Key-Value (KV) cache is used in transformer inference to generate the next token faster. For example, when large language models (LLMs) are generating text, the KV cache stores information about the model's hidden activations for the previously generated text to efficiently generate the next text token. While not used during training, the KV cache is a crucial implementation detail for fast transformer inference. In this post, I show that a KV cache results in a $20\times$ inference speedup over naive transformer inference. 
 
-This post goes over a self-contained and minimal KV cache implementation in only PyTorch. I illustrate the ideas with a small language model I trained on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset so the code is fast to run on a consumer GPU. The code is at [github.com/aszot/kv-cache](https://github.com/ASzot/kv-cache). 
+This post goes over a self-contained and minimal KV cache implementation in only PyTorch. I illustrate the ideas with a small language model I trained on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. The code is at [github.com/aszot/kv-cache](https://github.com/ASzot/kv-cache) and is only a single small Python file. It also runs all the below examples in just a couple seconds on a consumer grade GPU.
 
 ## KV Cache Formulation
-In this section I formalize the KV Cache implementation. First consider an input sequence of $n$ input tokens $\{ c_1, \dots, c_n \}$ (like a prompt) and we want to generate a response of $k$ tokens (like an answer to the prompt). These $n$ tokens are embedded into $d$ dimensional vectors $ X_{1:n} \in \mathbb{R}^{n \times d}$. The transformer layer is parameterized by:
+This section formalizes the KV Cache implementation. First consider an input sequence of $n$ input tokens $\{ c_1, \dots, c_n \}$ (like a prompt) and we want to generate a response of $k$ tokens (like an answer to the prompt). These $n$ tokens are embedded into $d$ dimensional vectors $ X_{1:n} \in \mathbb{R}^{n \times d}$. The transformer layer is parameterized by:
 
-- Query, key and value projections $W^Q, W^K, W^V$ all in $\mathbb{R}^{d \times d}$ where for simplicitly we assume the key and value hidden dimension are the same as the embedding dimension and there is only one attention head.
+- Query, key and value projections $W^Q, W^K, W^V$ all in $\mathbb{R}^{d \times d}$ where for simplicity we assume the key and value hidden dimension are the same as the embedding dimension and there is only one attention head.
 - Attention output projection weight $W^O \in \mathbb{R}^{d \times d}$.
 - Feedforward network (FFN), which is typically a 2-layer MLP. 
 
@@ -25,7 +25,7 @@ T(X_{1:n}) = \text{FFN} \left( \text{LayerNorm} \left( X_{1:n} + \text{Att}(\tex
 $$
 Where $Q_{1:n} = X_{1:n}W^Q, K_{1:n} = X_{1:n}W^K, V_{1:n} = X_{1:n}W^V$. Notice that $\text{Att}(X_{1:n}) $ is shape $n \times n$ and $Q_{1:n}, K_{1:n}, V_{1:n}$ are all shape $ n \times d$. We then iteratively apply $L$ more transformer layers to get the final activations $X_{1:n}^L$. We predict the next token $ c_{n+1}$ based on $X_n^L$.
 
-The KV cache is used to predict the _next_ token $c_{n+2}$ by reusing our previous computations. The key insight is we only need $X_{n+1}^L$ to predict $c_{n+2}$ (and $X_{1:n}^L $ are anyways the exact same as when computing $c_{n+1}$ due to the causal attention). We embed the previously predicted token $c_{n+1}$ to get $X_{n+1}$ and compute $Q_{n+1}, K_{n+1}, V_{n+1}$ as before. We then compute the attention score of $X_{n+1}$ with $X_{1:n}$ as:
+The KV cache is used to predict the _next_ token $c_{n+2}$ by reusing the previous computations. The key insight is we only need $X_{n+1}^L$ to predict $c_{n+2}$ (and $X_{1:n}^L $ are anyways the exact same as when computing $c_{n+1}$ due to the causal attention). We embed the previously predicted token $c_{n+1}$ to get $X_{n+1}$ and compute $Q_{n+1}, K_{n+1}, V_{n+1}$ as before. We then compute the attention score of $X_{n+1}$ with $X_{1:n}$ as:
 $$
 \text{Att}(X_{n+1}) = \text{Softmax} \left( \frac{Q_{n+1} [K_{1:n}, K_{n+1}]^\top}{\sqrt{d}} \right) [V_{1:n}, V_{n+1}]
 $$
@@ -240,7 +240,7 @@ This achieves **27** tokes per second.
 ## KV Cache - Dynamic
 We can significantly improve on the 27 tokens per-second by using a KV cache. We implement the KV cache by providing an alternative forward pass implementation that will be used for text generation. This new forward pass produces the _exact same outputs_ as `transformer_forward`, but does so more efficiently by reusing the KV activations as described in detail in the previous [KV cache formulation](#kv-cache-formulation) section. The new forward pass returns the next token distributions along with the KV cache.
 
-Now the `idx` inputs will be length $n$ for an $n$ token prompt and then length $1$ for every subsequent call. We need to adjust the position offset by the number of tokens in the KV cache. The attention matrix is now rectangular with shape $1 \times (k+1)$ for every call after processing the prompt. 
+Now the `idx` inputs will be length $n$ for an $n$ token prompt and then length $1$ for every subsequent call. We need to adjust the position offset by the number of tokens in the KV cache. After processing $k$ tokens, the attention matrix is now rectangular with shape $1 \times (k+1)$ for every call after processing the prompt. The $1$ is because only a single token is processed at a time.
 ```python
 def transformer_forward_kv(model: CausalTransformer, idx: Tensor, kv_cache: Tensor):
     device = idx.device
@@ -338,21 +338,25 @@ Timing it with the same setup gets **248** tokens per second, a **9.2x** speedup
 
 ## KV Cache - Preallocated
 
-KV cache where we fix a tensor ahead of time.
+A more efficient KV cache implementation preallocates the KV cache tensor ahead of time. Now the code writes the new $K, V$ tensors to the KV cache tensor in place during each generation step. The attention matrix is now $1 \times N$ where $N$ is the _maximum sequence length_$. The causal attention mask ensures that the token we are currently predicting does not attend to future KV cache positions (which also are not yet initialized).
 ```python
 def transformer_forward_kv_preallocated(
     model: CausalTransformer,
-    idx: Tensor,
+    input_tokens: Tensor,
     kv_cache: Tensor,
     seq_idxs: Tensor,
-    pos_embed,
+    pos_embed: Tensor,
 ):
-    device = idx.device
+    """
+    :param kv_cache: This tensor has shape
+        (#layers, 2, batch_size, #heads, max_context_length, embed_dim)
+        Write to this tensor in place.
+    :param seq_idxs: Sequence indices of the current input `idxs`.
+    """
 
     # Embed input IDs and include position information.
-    x = model.tok_embed(idx) + pos_embed[seq_idxs]
-
-    x = model.dropout(x)
+    x = model.tok_embed(input_tokens) + pos_embed[seq_idxs]
+    x = model.input_dropout(x)
 
     # Apply self-attention and feedforward layers.
     for layer_idx, block in enumerate(model.blocks):
@@ -365,15 +369,16 @@ def transformer_forward_kv_preallocated(
         # Write the new KV values into the cache.
         # `kv_cache` has shape:
         # [#layers, 2, batch_size, #heads, max_ctx_len, hidden_dim]
-        # Must use `copy_` otherwise the input is mutated.
         kv_cache[layer_idx, 0, :, :, seq_idxs] = k
         kv_cache[layer_idx, 1, :, :, seq_idxs] = v
 
+        # Get the K, V values for the current layer.
         k = kv_cache[layer_idx, 0]
         v = kv_cache[layer_idx, 1]
-        # kv are shape: [batch_size, #heads, ctx_len, hidden_dim]
+        # k,v are shape: [batch_size, #heads, max_context_length, hidden_dim]
 
         att = (q @ k.transpose(-2, -1)) / np.sqrt(k.shape[-1])
+        # `att` is shape [batch_size, #heads, #input tokens, max_context_length]
 
         # Mask out the upper triangular part of the matrix for causal self-attention.
         # Assign to `-inf` so the softmax sets it to 0.
@@ -381,6 +386,7 @@ def transformer_forward_kv_preallocated(
             block.mask[:, :, seq_idxs] == 0,
             float("-inf"),
         )
+        # `att` is still shape [batch_size, #heads, #input tokens, max_context_length]
 
         # Softmax per row.
         att = F.softmax(att, dim=-1)
@@ -397,8 +403,9 @@ def transformer_forward_kv_preallocated(
     x = model.layernorm(x)
 
     return model.lm_head(x)
-
-
+```
+Timing this approach gets **327** tokens per second a **1.3x** speedup over using the dynamically allocated KV cache. The preallocated KV cache is also compatible with the `torch.compile` optimization because the input shapes to `transformer_forward_kv_preallocated` are constant. The below code shows both with and without compiling the forward pass. The forward pass for generating the first token will have a different `input_tokens` shape than subsequent calls since it must process the prompt. Therefore, the code gives 2 warmup steps to compile the forward function for single token generation.
+```python
 def generate_text_kv_preallocated(
     prompt: str,
     n_gen_toks: int,
@@ -406,9 +413,8 @@ def generate_text_kv_preallocated(
     should_compile: bool,
     stop_on_end_token: bool = False,
 ):
-    output = prompt
-    prefix = torch.tensor(tokenizer.encode(output)).to(device).view(1, -1)
-    stream_text(output)
+    prefix = torch.tensor(tokenizer.encode(prompt)).to(device).view(1, -1)
+    stream_text(prompt)
     cur_toks = prefix
 
     # Pre-allocate a certain KV cache size.
@@ -425,6 +431,8 @@ def generate_text_kv_preallocated(
         ),
         device=device,
     )
+
+    # Preallocate all position embeddings.
     pos_embed = model.pos_embed(torch.arange(0, max_ctx_len, dtype=int, device=device))
 
     seq_idxs = torch.arange(max_ctx_len).to(device)
@@ -434,6 +442,7 @@ def generate_text_kv_preallocated(
     else:
         forward_fn = transformer_forward_kv_preallocated
 
+    # Track the current starting token sequence index
     tok_idx = 0
 
     # 1 step for the prompt (which has a different shape) and 1 step for the
@@ -442,6 +451,7 @@ def generate_text_kv_preallocated(
 
     for i in range(n_gen_toks + warmup_steps):
         if i == warmup_steps:
+            # Only start profiling after `warmup_steps`. 
             start = time.time()
 
         ctx_len = cur_toks.shape[1]
@@ -461,17 +471,13 @@ def generate_text_kv_preallocated(
         next_s = tokenizer.decode([next_tok.item()])
         if stop_on_end_token and next_s == END_TOKEN:
             break
-        output += next_s
         stream_text(next_s)
-    print(
-        f"\nPre Allocated KV Cache Tokens Per Second ({should_compile=})= {num_test_tokens / (time.time() - start)}\n"
-    )
 ```
-Timing it gets **327** tokens per second and with torch compile on **554** tokens per second.
+Running with torch compile results in **554** tokens per second. This is a **1.7x** speedup over the non-compiled version.
 
 ## Conclusion
 
-This is what the tokens per second looked like across the different methods.
+The final KV cache implementation with the preallocatd KV cache and torch compile was almost **21x** faster than the generation code without any KV cache. The numbers per setting are summarized below.
 
 | Setting | Steps-Per-Second | 
 |------|:------:|
@@ -480,9 +486,9 @@ This is what the tokens per second looked like across the different methods.
 |   Preallocated KV cache |   327 |
 |   Preallocated KV cache - with torch compile|   554   |
 
-The code for this post to run it yourself is at [github.com/ASzot/kv-cache](https://github.com/ASzot/kv-cache). The code runs fast and on a small GPU.
+All the code for this post is at [github.com/ASzot/kv-cache](https://github.com/ASzot/kv-cache). The code is just a short single Python file and only takes a couple seconds to run on a consumer grade GPU.
 
-If you have any questions or spot any errors, contact [asz.post.contact@gmail.com](mailto:asz.post.contact@gmail.com). Join [my email list here](https://mailchi.mp/30a660245978/add-email) to be notified whenever I make a new post.
+If you have any questions or spot any errors, contact [asz.post.contact@gmail.com](mailto:asz.post.contact@gmail.com). Join [the email list here](https://mailchi.mp/30a660245978/add-email) to be notified about new posts.
 
 ## Changes
 - July 8th, 2024: Posted.

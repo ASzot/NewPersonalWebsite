@@ -9,6 +9,10 @@
             {{- .Params.Title | default (T .Section) | default .Section | dict "Some" | T "allSome" -}}
         </h2>
 
+        <p>
+            Short, informal posts on implementation and small experiments in deep learning. If you have any questions or spot any errors, contact <a href='mailto:asz.post.contact@gmail.com'>asz.post.contact@gmail.com</a>. Join <a href='https://mailchi.mp/30a660245978/add-email'>the email list here</a> to be notified about new posts.
+        </p>
+
         {{- /* Paginate */ -}}
         {{- if .Pages -}}
             {{- $pages := .Pages.GroupByDate "2006" -}}
