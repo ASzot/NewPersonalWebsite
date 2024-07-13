@@ -5,39 +5,39 @@ date: 2024-06-25
 
 
 ## Intro
-The Key-Value (KV) cache is used in transformer inference to generate the next token faster. For example, when large language models (LLMs) are generating text, the KV cache stores information about the model's hidden activations for the previously generated text to efficiently generate the next text token. While not used during training, the KV cache is a crucial implementation detail for fast transformer inference. In this post, I show that a KV cache results in a $20\times$ inference speedup over naive transformer inference. 
+The Key-Value (KV) cache is used to speed up next token prediction in transformer models. For example, when large language models (LLMs) are generating text, the KV cache stores the model's activations for previously generated text to efficiently generate the next token. While not used during training, the KV cache is a crucial implementation detail for fast transformer inference. In this post, I go over KV cache implementation details and show that it results in a $20\times$ inference speedup over naive transformer inference. 
 
-This post goes over a self-contained and minimal KV cache implementation in only PyTorch. I illustrate the ideas with a small language model I trained on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. The code is at [github.com/aszot/kv-cache](https://github.com/ASzot/kv-cache) and is only a single small Python file. It also runs all the below examples in just a couple seconds on a consumer grade GPU.
+The KV cache implementation is self-contained and minimal in only PyTorch. I illustrate the ideas with a small language model I trained on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. The code is at [github.com/aszot/kv-cache](https://github.com/ASzot/kv-cache) and is only a small single Python file. It also runs all the below examples in just a couple seconds on a consumer grade GPU.
 
 ## KV Cache Formulation
-This section formalizes the KV Cache implementation. First consider an input sequence of $n$ input tokens $\{ c_1, \dots, c_n \}$ (like a prompt) and we want to generate a response of $k$ tokens (like an answer to the prompt). These $n$ tokens are embedded into $d$ dimensional vectors $ X_{1:n} \in \mathbb{R}^{n \times d}$. The transformer layer is parameterized by:
+First, this section formalizes the KV Cache implementation. First consider an input sequence of $n$ input tokens $\{ c_1, \dots, c_n \}$ (like a prompt) and we want to generate a response of $k$ tokens (like an answer to the prompt). These $n$ tokens are embedded into $d$ dimensional vectors $ X_{1:n} \in \mathbb{R}^{n \times d}$. The transformer layer is parameterized by:
 
 - Query, key and value projections $W^Q, W^K, W^V$ all in $\mathbb{R}^{d \times d}$ where for simplicity we assume the key and value hidden dimension are the same as the embedding dimension and there is only one attention head.
 - Attention output projection weight $W^O \in \mathbb{R}^{d \times d}$.
 - Feedforward network (FFN), which is typically a 2-layer MLP. 
 
-We compute the transformer layer output $T(X_{1:n})$ as:
+The transformer layer output $T(X_{1:n})$ is computed as as:
 $$
 \text{Att}(X_{1:n}) = \text{Softmax} \left( \frac{Q_{1:n}K_{1:n}^\top}{\sqrt{d}} \right) V_{1:n}
 $$
 $$
 T(X_{1:n}) = \text{FFN} \left( \text{LayerNorm} \left( X_{1:n} + \text{Att}(\text{LayerNorm}(X_{1:n})) W^O \right)  \right)
 $$
-Where $Q_{1:n} = X_{1:n}W^Q, K_{1:n} = X_{1:n}W^K, V_{1:n} = X_{1:n}W^V$. Notice that $\text{Att}(X_{1:n}) $ is shape $n \times n$ and $Q_{1:n}, K_{1:n}, V_{1:n}$ are all shape $ n \times d$. We then iteratively apply $L$ more transformer layers to get the final activations $X_{1:n}^L$. We predict the next token $ c_{n+1}$ based on $X_n^L$.
+Where $Q_{1:n} = X_{1:n}W^Q, K_{1:n} = X_{1:n}W^K, V_{1:n} = X_{1:n}W^V$. Notice that $\text{Att}(X_{1:n}) $ is shape $n \times n$ and $Q_{1:n}, K_{1:n}, V_{1:n}$ are all shape $ n \times d$. $L$ more transformer layers are iteratively applied to get the final activations $X_{1:n}^L$. The next token $ c_{n+1}$ is predicted based on $X_n^L$.
 
-The KV cache is used to predict the _next_ token $c_{n+2}$ by reusing the previous computations. The key insight is we only need $X_{n+1}^L$ to predict $c_{n+2}$ (and $X_{1:n}^L $ are anyways the exact same as when computing $c_{n+1}$ due to the causal attention). We embed the previously predicted token $c_{n+1}$ to get $X_{n+1}$ and compute $Q_{n+1}, K_{n+1}, V_{n+1}$ as before. We then compute the attention score of $X_{n+1}$ with $X_{1:n}$ as:
+The KV cache is used to predict the _next_ token $c_{n+2}$ by reusing the previous computations. The key insight is only $X_{n+1}^L$ is needed to predict $c_{n+2}$ (and $X_{1:n}^L $ are anyways the exact same as when computing $c_{n+1}$ due to the causal attention). The previously predicted token $c_{n+1}$ is embedded to get $X_{n+1}$ and compute $Q_{n+1}, K_{n+1}, V_{n+1}$ as before. The attention score of $X_{n+1}$ with $X_{1:n}$ is computed as:
 $$
 \text{Att}(X_{n+1}) = \text{Softmax} \left( \frac{Q_{n+1} [K_{1:n}, K_{n+1}]^\top}{\sqrt{d}} \right) [V_{1:n}, V_{n+1}]
 $$
-Where $[A, B]$ indicates concatenating the rows of $A$ and $B$. Notice that $\text{Att}(X_{n+1})$ is shape $1 \times n$. We compute $T(X_{n+1})$ as before and predict $c_{n+2}$ from $X_{n+1}^L$. 
+Where $[A, B]$ indicates concatenating the rows of $A$ and $B$. Notice that $\text{Att}(X_{n+1})$ is shape $1 \times n$. $T(X_{n+1})$ is computed and $c_{n+2}$ is predicted from $X_{n+1}^L$. 
 
-The KV cache for generating token $n+2$ was $K_{1:n}, V_{1:n}$. The benefits of the KV cache are we didn't need to recompute $K_{1:n}, V_{1:n}$ and only need to compute the attention relative to the newly predicted token at $n+1$. Next, we implement this idea in code.
+$K_{1:n}, V_{1:n}$ are the KV cache for generating token $n+2$. The benefits of the KV cache are that $K_{1:n}, V_{1:n}$ are not recomputed and only need to compute the attention relative to the newly predicted token at $n+1$. Next, this idea is implemented in code.
 
 ## Model Definition and Forward pass
 
 We will implement the transformer and KV cache primarily with `torch`. `tiktoken` is used for tokenization and `einops` is used to make the attention operation more readable. 
 
-First, define the transformer parameters. The architecture is based on GPT-2. The `TransformerBlock` module defines a single transformer layer and will be stacked to create the final transformer. Each layer initializes the projections $W^Q, W^K, W^V$ (via `qkv_proj`) to produce $Q, K, V$ and the output projection $W^O$ (via `att_out_proj`). The FFN network does not use any bias parameters. We use learned position embeddings. For better efficiency, we also precompute the causal attention mask based on a maximum possible sequence length.
+First, define the transformer parameters. The architecture is based on GPT-2. The `TransformerBlock` module defines a single transformer layer and will be stacked to create the final transformer. Each layer initializes the projections $W^Q, W^K, W^V$ (via `qkv_proj`) to produce $Q, K, V$ and the output projection $W^O$ (via `att_out_proj`). The FFN network does not use any bias parameters. The transformer uses learned position embeddings. For better efficiency, the causal attention mask is precomputed based on a defined maximum possible sequence length.
 ```python
 class TransformerBlock(nn.Module):
     """
@@ -114,7 +114,7 @@ class CausalTransformer(nn.Module):
         # the same weight values).
         self.tok_embed.weight = self.lm_head.weight
 ```
-Next, compute the "parallel" transformer forward pass where we compute the attention scores for all input tokens at the same time. This forward pass is used for training. Note I implement the attention operation to keep the code simple rather than using the built in [PyTorch attention](https://pytorch.org/docs/2.2/generated/torch.nn.functional.scaled_dot_product_attention.html). The next section shows it's inefficient to reuse this code for inference since it recomputes attention scores for every new tokens. The KV cache is the more efficient alternative for inference.
+Next, compute the "parallel" transformer forward pass where the attention scores for all input tokens are computed at the same time. This forward pass is used for training. Note that I implement the attention operation to keep the code simple rather than using the built in [PyTorch attention](https://pytorch.org/docs/2.2/generated/torch.nn.functional.scaled_dot_product_attention.html). The next section shows it's inefficient to reuse this code for inference since it recomputes attention scores for every new tokens. The KV cache is the more efficient alternative for inference.
 
 ```python
 def transformer_forward(model: CausalTransformer, idx):
@@ -162,7 +162,7 @@ def transformer_forward(model: CausalTransformer, idx):
 
 ## Training
 
-In this section, I train the transformer model from scratch on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. You can also skip this training part and just use the model I trained and included on the [github repo](https://github.com/ASzot/kv-cache/blob/main/model.pth). The training code automatically downloads the TinyStories dataset and trains for 1 epoch over the dataset. Thue model trains on subsequences of 256 tokens, which can span multiple stories.
+In this section, the transformer model defined above is trained from scrach on the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset. You can also skip this training part and just use the model I trained and included on the [github repo](https://github.com/ASzot/kv-cache/blob/main/model.pth). The training code automatically downloads the TinyStories dataset and trains for 1 epoch over the dataset. The model trains on subsequences of 256 tokens, which can span multiple stories.
 ```python
 max_ctx_len = 256
 tokenizer = tiktoken.get_encoding("gpt2")
@@ -190,7 +190,7 @@ _As Tim was playing, he saw a big, scary dog. The dog was barking and running aw
 _His mom listened and listened to the dog. Tim was happy to have a new friend and played with his toys. From that day on, Tim learned to be careful and not to touch things._"
 
 ## Generation Without KV Cache
-The simplest way to do inference is reuse the `transformer_forward` call to generate each new token. The current sequence of $n$ tokens is input to `transformer_forward` which outputs a $n$ next token probability distributions. We take the most likely next token for the final next token prediction and then add this to the list of tokens, resulting in $n+1$ tokens. We repeat this process to generate the entire response.
+The simplest way to do inference is reuse the `transformer_forward` call to generate each new token. The current sequence of $n$ tokens is input to `transformer_forward` which outputs $n$ next token probability distributions. The most likely next token from the final hidden activation is selected and then added to the list of tokens, resulting in $n+1$ tokens. This process is repeated to generate the entire response.
 ```python
 def generate_text(
     prompt: str,
@@ -224,10 +224,13 @@ def generate_text(
         # Stream the newly generated text to stdout.
         stream_text(next_s)
 ```
-Time how long it takes to generate 500 tokens. 
+Time how long it takes to generate 200 tokens. 
 ```python
+
+model.eval()
 prompt = "Once upon a time, there was "
-num_test_tokens = 500
+# This must be less than the maximum sequence length.
+num_test_tokens = 200
 
 # Time how long generation takes when not using any KV cache.
 with torch.no_grad():
@@ -238,13 +241,15 @@ with torch.no_grad():
 This achieves **27** tokes per second.
 
 ## KV Cache - Dynamic
-We can significantly improve on the 27 tokens per-second by using a KV cache. We implement the KV cache by providing an alternative forward pass implementation that will be used for text generation. This new forward pass produces the _exact same outputs_ as `transformer_forward`, but does so more efficiently by reusing the KV activations as described in detail in the previous [KV cache formulation](#kv-cache-formulation) section. The new forward pass returns the next token distributions along with the KV cache.
+Using a KV cache will significantly improve on the 27 tokens per-second. The KV cache is implemented by providing an alternative forward pass implementation that will be used for text generation. This new forward pass produces the _exact same outputs_ as `transformer_forward`, but does so more efficiently by reusing the KV activations as described in detail in the previous [KV cache formulation](#kv-cache-formulation) section. The new forward pass returns the next token distributions along with the KV cache.
 
-Now the `idx` inputs will be length $n$ for an $n$ token prompt and then length $1$ for every subsequent call. We need to adjust the position offset by the number of tokens in the KV cache. After processing $k$ tokens, the attention matrix is now rectangular with shape $1 \times (k+1)$ for every call after processing the prompt. The $1$ is because only a single token is processed at a time.
+Inputs `input_tokens`is a tensor of length $n$ for an $n$ token prompt and then length $1$ for every subsequent call. The index into the position embeddings must also be offset by the number of existing tokens in the KV cache. After processing $k$ tokens, the attention matrix is now rectangular with shape $1 \times (k+1)$ for every call after processing the prompt. The $1$ is because only a single token is processed at a time.
 ```python
-def transformer_forward_kv(model: CausalTransformer, idx: Tensor, kv_cache: Tensor):
-    device = idx.device
-    batch_size, ctx_len = idx.shape
+def transformer_forward_kv(
+    model: CausalTransformer, input_tokens: Tensor, kv_cache: Tensor
+):
+    device = input_tokens.device
+    batch_size, ctx_len = input_tokens.shape
 
     # `kv_offset` tracks how many elements are already in the KV cache.
     kv_offset = 0
@@ -256,7 +261,7 @@ def transformer_forward_kv(model: CausalTransformer, idx: Tensor, kv_cache: Tens
     pos_embed = model.pos_embed(
         torch.arange(kv_offset, kv_offset + ctx_len, dtype=int, device=device)
     )
-    x = model.tok_embed(idx) + pos_embed
+    x = model.tok_embed(input_tokens) + pos_embed
     x = model.input_dropout(x)
 
     # Tensor that stores the KV cache for the new tokens.
@@ -334,11 +339,11 @@ def transformer_forward_kv(model: CausalTransformer, idx: Tensor, kv_cache: Tens
 
     return model.lm_head(x), new_kv_cache
 ```
-Timing it with the same setup gets **248** tokens per second, a **9.2x** speedup over no KV cache. However, this KV cache implementation uses a _dynamically allocated_ KV cache since we recreate the `new_kv_cache` tensor on every forward pass call to account for the new token. Reallocating this tensor on every forward pass is inefficient. We fix this issue in the next section.
+Timing it with the same setup gets **248** tokens per second, a **9.2x** speedup over no KV cache. However, this KV cache implementation uses a _dynamically allocated_ KV cache since the `new_kv_cache` tensor is recreated on every forward pass call to account for the new token. Reallocating this tensor on every forward pass is inefficient. The next section fixes this issue.
 
 ## KV Cache - Preallocated
 
-A more efficient KV cache implementation preallocates the KV cache tensor ahead of time. Now the code writes the new $K, V$ tensors to the KV cache tensor in place during each generation step. The attention matrix is now $1 \times N$ where $N$ is the _maximum sequence length_$. The causal attention mask ensures that the token we are currently predicting does not attend to future KV cache positions (which also are not yet initialized).
+A more efficient KV cache implementation preallocates the KV cache tensor ahead of time. Now the code writes the new $K, V$ tensors to the KV cache tensor in place during each generation step. The attention matrix is now $1 \times N$ where $N$ is the _maximum sequence length_. The causal attention mask ensures that the token being currently predicted does not attend to future KV cache positions (which also are not yet initialized).
 ```python
 def transformer_forward_kv_preallocated(
     model: CausalTransformer,
