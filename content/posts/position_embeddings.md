@@ -6,7 +6,7 @@ date: 2024-07-24
 
 ## Intro
 
-Transformer models need position embeddings to distinguish the ordering of the inputs. The choice of position embedding is important for a transformer to process longer sequences of inputs than it was trained on. This post explores minimal implementations for several position embedding methods. The implementations are minimal, self-contained and in pure PyTorch. Experiments use the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset, meaning models only take a couple hours to train from scratch on a consumer grade GPU. The code is at [github.com/aszot/position-embeddings](https://github.com/ASzot/position-embeddings) and is only a small single Python file.
+Transformer models need position embeddings to distinguish the ordering of the inputs. The choice of position embedding is important for a transformer to process longer sequences of inputs than it was trained on. This post explores several position popular embedding methods. The implementations are minimal, self-contained and in pure PyTorch. Experiments use the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset, meaning models only take a couple hours to train from scratch on a consumer grade GPU. The code is at [github.com/aszot/position-embeddings](https://github.com/ASzot/position-embeddings) and is only a small single Python file.
 
 ## General Framework
 
@@ -20,11 +20,11 @@ X_{\text{Att}} = X_{\text{ln}} + \text{Softmax} \left( \frac{QK^\top}{\sqrt{D}} 
 $$
 The position embedding methods this post explores inject position into the transformer layer in one of two ways:
 
-1. **Input Embeddings:** The input embeddings to only the first transformer layer are modified to incorporate position.
+1. **Input Embeddings:** A $N \times D$ tensor is added to only the first transformer layer to incorporate position information.
 
 2. **Modifying Attention**: The $\text{Softmax} \left( \frac{QK^\top}{\sqrt{D}} \right)$ is modified to incorporate position information, typically through modeling some pairwise relation between elements in the input sequence. 
 
-We can summarize these position embedding methods in the following interface which all the position embeddings will implement.
+These position embeddings can be summarized in the following interface:
 ```python
 class PositionEmbedding(nn.Module):
     def get_attn_mask(self, ctx_len: int, device) -> Tensor:
@@ -54,9 +54,7 @@ class PositionEmbedding(nn.Module):
 
         return q_or_v
 ``` 
-
-This interface can be used in a transformer forward pass through:
-
+This interface is used in the following transformer forward pass.
 ```python
 def transformer_forward(model: CausalTransformer, input_tokens: Tensor) -> Tensor:
     """
@@ -163,11 +161,15 @@ class SinusoidalEmbedding(PositionEmbedding):
 ```
 The below plot shows the training loss when using this position embedding to train a language model in the same setting as above. 
 
-{{< image src="/img/position_embeddings/.png" class="center-image" width="600px" caption="Train loss with sinusoidal position embedding." >}}
+{{< image src="/img/position_embeddings/sin_train.png" class="center-image" width="600px" caption="Train loss with sinusoidal position embedding." >}}
 
+The hope is that the model will extrapolate to $E_{n}$ for $n $ greater than the training context length of 256. The following figure shows the loss on _train tokens_ for only the elements in context position between 256 and 512. Note that this is on the same training text, and thus only shows length extrapolation abilities. As the figure shows, the loss is very high for these longer sequences, meaning the model fails to extrapolate to these sequences with sinusoidal position embeddings.
 
-## Alibi
-Fixed offset added to the softmax scores. Controlled by setting the attention mask.
+{{< image src="/img/position_embeddings/sin_ext.png" class="center-image" width="600px" caption="Extrapolation to longer sequences with sinusoidal position embeddings with the plot displaying average loss on token positions 256-512." >}}
+
+## Attention with Linear Biases (ALiBi)
+
+[Attention with Linear Biases (ALiBi)](https://arxiv.org/abs/2108.12409) position embeddings seeks to enable context length extrapolation by adding a pairwise distance penalty in the attention computation. Specifically, the $N \times N$ attention scores $ QK^\top$ are modified by adding a fixed $N \times N$ offset tensor. Specifically, for the softmax input, we compute $QK^\top + E \cdot m$ where $E_{ij} = |i - j|$ when $ i > j$ or 0 otherwise (upper right triangle is all zeros, diagonal is all 0 and lower left triangle are relative distances) and $m $ is a per-attention head scaling factor. We can combine this operation with the causal attention mask which sets the upper right triangle of $ E$ to $ -\infty $. Like sinusoidal embeddings, ALiBi has no learned parameters. But unlike sinusoidal embeddings, AliBi is incorporated in every transformer layer, not just the input. AliBi also encodes relative position between sequence indices, rather than the absolute sequence index. In code:
 ```python
 class ALiBiEmbedding(PositionEmbedding):
     def __init__(
@@ -197,14 +199,14 @@ class ALiBiEmbedding(PositionEmbedding):
 
     def get_attn_mask(self, ctx_len, device):
         return self.mask[:, :, :ctx_len, :ctx_len]
-
-
 ```
+Training the language model with this position embedding results in extrapolation to longer sequence lengths as shown in the below figure. 
 
+{{< image src="/img/position_embeddings/alibi_ext.png" class="center-image" width="600px" caption="Extrapolation to longer sequences with ALiBi position embeddings with the plot displaying average loss on token positions 256-512." >}}
 
 ## Rotary Position Embedding (RoPE)
 
-Used in many LLMs such as [Llama3](https://llama.meta.com) and [Gemma](https://storage.googleapis.com/deepmind-media/gemma/gemma-report.pdf). A fixed transformation on the $Q, K$ tensors. The key equation to implement is equation 34 at the bottom of page 7 from the RoPE paper. The _rotary matrix_ $R_{\Theta, m}^d$ encodes relative distances and is set by fixed parameters  $ \Theta = \{ \theta_1, \dots, \theta_{d/2}\}$ where $\theta_i = 10,000^{-2i / d}$. $R_{\Theta, m}^d$ is a sparse matrix, but as shown in Eq. 34 we can simplify it's matrix product as: 
+Used in many LLMs such as [Llama3](https://llama.meta.com) and [Gemma](https://storage.googleapis.com/deepmind-media/gemma/gemma-report.pdf), [Rotary Position Embedding (RoPE)](https://arxiv.org/abs/2104.09864) also relies on relative positions between sequence elements. RoPE is also implemented as a fixed product on the $Q, K$ tensors. The key equation to implement is equation 34 at the bottom of page 7 from the RoPE paper. The _rotary matrix_ $R_{\Theta, m}^d$ encodes relative distances and is set by fixed parameters  $ \Theta = \{ \theta_1, \dots, \theta_{d/2}\}$ where $\theta_i = 10,000^{-2i / d}$. We apply the RoPE transformation by computing $ \left( R_{\Theta, m}^d Q \right) \left( R_{\Theta, m}^d K \right)^\top $ in place of the standard $QK^\top$ in the attention operation. Since $R_{\Theta, m}^d$ is a sparse matrix Eq. 34 of the paper shows we can simplify it's matrix product as: 
 $$
 R_{\Theta, m}^d x = 
 \begin{pmatrix} 
@@ -281,12 +283,15 @@ class RoPE_Embedding(PositionEmbedding):
         # Stack the even and odd terms to be ordered 0,1,2,3,... again
         return torch.stack([even_terms, odd_terms], -1).view(x.shape)
 ```
-
-## Length Generalization Experiments
-Which position embedding best extrapolates to a longer sequence length? 
-
+Like Alibi, RoPE also extrapolates to longer sequence lengths as shown in the figure below.
+{{< image src="/img/position_embeddings/rope_ext.png" class="center-image" width="600px" caption="Loss on context longer sequences of training tokens with RoPE position embeddings. The loss is computed on tokens in context positions 256-512." >}}
 
 ## Conclusion
+As shown in the figures below, sinusoidal, ALiBi and RoPE, achieve relatively similar performance on the training distribution of context lengths. However, for extended context lengths, sinusoidal fails. ALiBi slightly outperforms RoPE, but by a small margin. Figure 1 of ALiBi [paper](https://arxiv.org/abs/2108.12409) also shows better extrapolation than RoPE.
+
+{{< image src="/img/position_embeddings/train.png" class="center-image" width="600px" caption="Loss with context length 0-512." >}}
+
+{{< image src="/img/position_embeddings/ext.png" class="center-image" width="600px" caption="Extrapolation to longer sequences with the plot displaying average loss on token positions 256-512." >}}
 
 If you have any questions or spot any errors, contact [asz.post.contact@gmail.com](mailto:asz.post.contact@gmail.com). Join [the email list here](https://mailchi.mp/30a660245978/add-email) to be notified about new posts.
 
