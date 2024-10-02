@@ -30,9 +30,15 @@ date: 2024-08-25
 - With the smaller model setting $E=1024,H=8,L=16$ we have 194,103,296 parameters. This results in 34.65gb mem usage.
 - The formula for our memory usage is:
 ```python
-model_params = ...
-activations = B * C * (2*toks+l*(6*e + h*t ))
+toks = 50257 # for gpt2 tokenizer.
+bytes_per_param = 2 # fixed for bfloat16
+model_params = ... # just get this from the model in pytorch, no need to manually calculate it.
+activations = B*C*(2*toks+l*(6*e+h*C))
 training_bytes = (4 * model_params + 2 * activations) * bytes_per_param / 1_000_000_000
+# Quick check in python
+f"{(4 * model_params + 2 * B*C*(2*toks+l*(6*e+h*C))) * bytes_per_param / 1_000_000_000:,}"
+# Only model stats
+f"{(4 * model_params) * bytes_per_param / 1_000_000_000:,}"
 ```
 Where the `6*e` comes from:
 - 3 from QKV projections
@@ -47,7 +53,8 @@ Where the `4*model_params` comes from
 
 Where the `2*acts` comes from forward and backwards.
 
-`python main.py --embed-dim 2048 --n-heads 32 --n-layers 32` results in 4,769,521,664 params. 37GB for model parameters. 
+- `python main.py --embed-dim 2048 --n-heads 32 --n-layers 32` results in 4,769,521,664 params. 37GB for model parameters. 
+- `--embed-dim 1024 --n-heads 32 --n-layers 32 --fsdp` is 336_742_400 params. 
 
 ## Acknowledgements
 - https://github.com/pytorch/torchtune useful for understanding how FSDP is applied.
