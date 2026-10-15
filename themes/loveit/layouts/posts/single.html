@@ -30,8 +30,8 @@
         {{- /* Meta */ -}}
         <div class="post-meta">
             <div class="post-meta-line">
-                {{- $author := $params.author | default .Site.Author.name | default (T "author") -}}
-                {{- $authorLink := $params.authorlink | default .Site.Author.link | default .Site.Home.RelPermalink -}}
+                {{- $author := $params.author | default .Site.Params.author.name | default (T "author") -}}
+                {{- $authorLink := $params.authorlink | default .Site.Params.author.link | default .Site.Home.RelPermalink -}}
                 {{- $categories := slice -}}
                 {{- range .Params.categories -}}
                     {{- $category := partialCached "function/path.html" . . | printf "/categories/%v" | $.Site.GetPage -}}
